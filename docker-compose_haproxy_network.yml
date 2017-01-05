@@ -1,0 +1,30 @@
+version: '2'
+services:
+  lb:
+    image: dockercloud/haproxy
+    ports:
+      - "80:80"
+    links:
+      - nodeapp
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - front
+  nodeapp:
+    build: .
+    env_file: env
+    networks:
+      - front
+      - back
+  redis:
+    image: redis
+    command: redis-server --appendonly yes
+    volumes:
+      - ./data:/data
+    networks:
+      - back
+networks:
+  front:
+    driver: bridge
+  back:
+    driver: bridge

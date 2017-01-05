@@ -1,9 +1,15 @@
 version: '2'
 services:
-  nodeapp:
-    build: .
+  lb:
+    image: dockercloud/haproxy
     ports:
       - "80:80"
+    links:
+      - nodeapp
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  nodeapp:
+    build: .
     env_file: env
   redis:
     image: redis
